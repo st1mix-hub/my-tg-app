@@ -1,41 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LUDKA CASINO</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LUDKA CASINO</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="game">
-        <h1>🎰 LUDKA CASINO</h1>
-        
-        <div class="balance-box">
-            <span>Баланс:</span>
-            <span id="balance">1000</span> 🪙
-        </div>
-
-        <div class="slots">
-            <div class="slot" id="slot1">🍒</div>
-            <div class="slot" id="slot2">🍒</div>
-            <div class="slot" id="slot3">🍒</div>
-        </div>
-
-        <div class="controls">
-            <input type="number" id="bet" value="10" min="1" max="1000">
-            <button id="spinBtn">🎲 КРУТИТЬ</button>
-        </div>
-
-        <div id="message" class="message">🎲 Сделай ставку и крути!</div>
-
-        <div class="win-table">
-            <h3>💎 Выигрыши:</h3>
-            <div>Три одинаковых x10</div>
-            <div>Два одинаковых x2</div>
-            <div>Три 💎 алмаза x50</div>
-        </div>
-    </div>
+  <div class="casino-container">
+    <h1 class="title">🎰 LUDKA CASINO</h1>
     
-    <script src="main.js"></script>
+    <div class="balance-box">
+      <span class="balance-label">Баланс:</span>
+      <span class="balance-value" id="balance">1000</span>
+      <span class="currency">🪙</span>
+    </div>
+
+    <div class="slot-machine">
+      <div class="reels">
+        <div class="reel" id="reel1">🍒</div>
+        <div class="reel" id="reel2">🍒</div>
+        <div class="reel" id="reel3">🍒</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="bet-control">
+        <label>Ставка:</label>
+        <input type="number" id="bet" value="10" min="1" max="1000" class="bet-input">
+      </div>
+      <button class="spin-button" id="spinBtn">🎲 КРУТИТЬ</button>
+    </div>
+
+    <div class="message-area" id="message">🎲 Сделай ставку и крути!</div>
+
+    <div class="win-table">
+      <h3>💎 Выигрыши:</h3>
+      <div class="win-row"><span>Три одинаковых</span> <span class="win-multiplier">x10</span></div>
+      <div class="win-row"><span>Два одинаковых</span> <span class="win-multiplier">x2</span></div>
+      <div class="win-row"><span>Три 💎 алмаза</span> <span class="win-multiplier">x50</span></div>
+    </div>
+  </div>
+  <script src="main.js"></script>
 </body>
 </html>
