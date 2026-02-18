@@ -222,7 +222,6 @@ body {
   font-weight: 700;
 }
 
-/* Для мобильных */
 @media (max-width: 400px) {
   .reel {
     width: 70px;
