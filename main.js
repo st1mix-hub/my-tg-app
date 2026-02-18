@@ -1,157 +1,78 @@
-import './style.css'
+let balance = 1000;
+let spinning = false;
 
-// Символы для барабанов
-const SYMBOLS = ['🍒', '🍋', '⭐', '💎', '7️⃣'];
+const symbols = ['🍒', '🍋', '⭐', '💎', '7️⃣'];
 
-// Множители выигрышей
-const WIN_MULTIPLIERS = {
-  '💎': { three: 50, two: 5 },
-  'default': { three: 10, two: 2 }
-};
+const reel1 = document.getElementById('reel1');
+const reel2 = document.getElementById('reel2');
+const reel3 = document.getElementById('reel3');
+const spinBtn = document.getElementById('spinBtn');
+const betInput = document.getElementById('bet');
+const balanceSpan = document.getElementById('balance');
+const messageDiv = document.getElementById('message');
 
-class SlotMachine {
-  constructor() {
-    this.balance = 1000;
-    this.isSpinning = false;
-    
-    // Элементы DOM
-    this.balanceEl = document.getElementById('balance');
-    this.reels = [
-      document.getElementById('reel1'),
-      document.getElementById('reel2'),
-      document.getElementById('reel3')
-    ];
-    this.spinBtn = document.getElementById('spinBtn');
-    this.betInput = document.getElementById('bet');
-    this.messageEl = document.getElementById('message');
-    
-    // Привязываем обработчики
-    this.spinBtn.addEventListener('click', () => this.spin());
-    
-    // Обновляем отображение баланса
-    this.updateBalance();
-    this.showMessage('🎲 Сделай ставку и крути!');
+spinBtn.onclick = spin;
+
+function spin() {
+  if (spinning) return;
+  
+  let bet = Number(betInput.value);
+  if (bet < 1 || bet > balance) {
+    messageDiv.textContent = '❌ Неверная ставка';
+    return;
   }
   
-  // Обновить баланс на экране
-  updateBalance() {
-    this.balanceEl.textContent = this.balance;
-  }
+  spinning = true;
+  spinBtn.disabled = true;
+  balance -= bet;
+  balanceSpan.textContent = balance;
   
-  // Показать сообщение
-  showMessage(text, isWin = false) {
-    this.messageEl.textContent = text;
-    this.messageEl.style.color = isWin ? 'gold' : 'white';
-  }
+  reel1.classList.add('spinning');
+  reel2.classList.add('spinning');
+  reel3.classList.add('spinning');
   
-  // Получить случайный символ
-  getRandomSymbol() {
-    return SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
-  }
-  
-  // Анимация вращения
-  async spinAnimation() {
-    // Запускаем анимацию
-    this.reels.forEach(reel => reel.classList.add('spinning'));
-    
-    // Меняем символы каждые 100мс для эффекта вращения
-    const spinInterval = setInterval(() => {
-      this.reels.forEach(reel => {
-        reel.textContent = this.getRandomSymbol();
-      });
-    }, 100);
-    
-    // Ждём 1 секунду
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Останавливаем анимацию
-    clearInterval(spinInterval);
-    this.reels.forEach(reel => reel.classList.remove('spinning'));
-  }
-  
-  // Проверить выигрыш
-  checkWin(symbols, bet) {
-    const [s1, s2, s3] = symbols;
-    
-    // Проверяем три одинаковых
-    if (s1 === s2 && s2 === s3) {
-      const multiplier = WIN_MULTIPLIERS[s1]?.three || WIN_MULTIPLIERS.default.three;
-      const winAmount = bet * multiplier;
-      return { win: true, amount: winAmount, message: `🎉 ДЖЕКПОТ! x${multiplier}` };
+  let count = 0;
+  const interval = setInterval(() => {
+    reel1.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+    reel2.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+    reel3.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+    count++;
+    if (count > 15) {
+      clearInterval(interval);
+      finish();
     }
-    
-    // Проверяем два одинаковых
-    if (s1 === s2 || s1 === s3 || s2 === s3) {
-      const multiplier = WIN_MULTIPLIERS.default.two;
-      const winAmount = bet * multiplier;
-      return { win: true, amount: winAmount, message: `👍 Неплохо! x${multiplier}` };
-    }
-    
-    return { win: false, amount: 0, message: '😢 Повезёт в следующий раз' };
-  }
+  }, 80);
   
-  // Основной спин
-  async spin() {
-    if (this.isSpinning) return;
+  function finish() {
+    const r1 = symbols[Math.floor(Math.random() * symbols.length)];
+    const r2 = symbols[Math.floor(Math.random() * symbols.length)];
+    const r3 = symbols[Math.floor(Math.random() * symbols.length)];
     
-    // Получаем ставку
-    const bet = parseInt(this.betInput.value);
+    reel1.textContent = r1;
+    reel2.textContent = r2;
+    reel3.textContent = r3;
     
-    // Проверки
-    if (isNaN(bet) || bet < 1) {
-      this.showMessage('❌ Минимальная ставка 1');
-      return;
-    }
+    reel1.classList.remove('spinning');
+    reel2.classList.remove('spinning');
+    reel3.classList.remove('spinning');
     
-    if (bet > this.balance) {
-      this.showMessage('❌ Недостаточно монет!');
-      return;
-    }
-    
-    // Начинаем игру
-    this.isSpinning = true;
-    this.spinBtn.disabled = true;
-    this.betInput.disabled = true;
-    
-    // Списываем ставку
-    this.balance -= bet;
-    this.updateBalance();
-    this.showMessage('🎰 Вращаем...');
-    
-    // Анимация вращения
-    await this.spinAnimation();
-    
-    // Генерируем финальные символы
-    const finalSymbols = [
-      this.getRandomSymbol(),
-      this.getRandomSymbol(),
-      this.getRandomSymbol()
-    ];
-    
-    // Показываем результат
-    this.reels.forEach((reel, i) => {
-      reel.textContent = finalSymbols[i];
-    });
-    
-    // Проверяем выигрыш
-    const result = this.checkWin(finalSymbols, bet);
-    
-    if (result.win) {
-      this.balance += result.amount;
-      this.updateBalance();
-      this.showMessage(`${result.message} +${result.amount} 🪙`, true);
+    let win = 0;
+    if (r1 === r2 && r2 === r3) {
+      win = bet * (r1 === '💎' ? 50 : 10);
+      messageDiv.textContent = `🎉 ДЖЕКПОТ! +${win} 🪙`;
+    } else if (r1 === r2 || r1 === r3 || r2 === r3) {
+      win = bet * 2;
+      messageDiv.textContent = `👍 Неплохо! +${win} 🪙`;
     } else {
-      this.showMessage(result.message);
+      messageDiv.textContent = '😢 Повезёт в следующий раз';
     }
     
-    // Завершаем
-    this.isSpinning = false;
-    this.spinBtn.disabled = false;
-    this.betInput.disabled = false;
+    if (win > 0) {
+      balance += win;
+      balanceSpan.textContent = balance;
+    }
+    
+    spinning = false;
+    spinBtn.disabled = false;
   }
 }
-
-// Запускаем игру при загрузке страницы
-document.addEventListener('DOMContentLoaded', () => {
-  new SlotMachine();
-});
