@@ -1,5 +1,5 @@
 import './style.css'
-
+console.log('JavaScript работает!');
 // Символы для барабанов
 const SYMBOLS = ['🍒', '🍋', '⭐', '💎', '7️⃣'];
 
