@@ -1,141 +1,85 @@
-body {
-    background: linear-gradient(135deg, #1a1a2e, #16213e);
-    color: white;
-    font-family: Arial;
-    text-align: center;
-    padding: 20px;
-    margin: 0;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+let balance = 1000;
+let spinning = false;
 
-.game {
-    max-width: 500px;
-    width: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    padding: 30px 20px;
-    border-radius: 30px;
-    border: 2px solid gold;
-    box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
-}
+const symbols = ['🍒', '🍋', '⭐', '💎', '7️⃣'];
 
-h1 {
-    color: gold;
-    font-size: 36px;
-    margin-bottom: 20px;
-    text-shadow: 0 0 10px gold;
-}
+const balanceEl = document.getElementById('balance');
+const slot1 = document.getElementById('slot1');
+const slot2 = document.getElementById('slot2');
+const slot3 = document.getElementById('slot3');
+const spinBtn = document.getElementById('spinBtn');
+const betInput = document.getElementById('bet');
+const messageEl = document.getElementById('message');
 
-.balance-box {
-    background: #0f0f1f;
-    padding: 15px;
-    border-radius: 50px;
-    margin-bottom: 30px;
-    font-size: 24px;
-    border: 1px solid gold;
-}
+spinBtn.addEventListener('click', spin);
 
-#balance {
-    color: gold;
-    font-weight: bold;
-    font-size: 28px;
-}
-
-.slots {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 30px;
-}
-
-.slot {
-    width: 90px;
-    height: 110px;
-    background: white;
-    color: black;
-    font-size: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 20px;
-    border: 3px solid gold;
-    box-shadow: inset 0 -5px 0 #aaa;
-}
-
-.spinning {
-    animation: spin 0.2s infinite;
-    opacity: 0.7;
-}
-
-@keyframes spin {
-    0% { transform: translateY(0); }
-    25% { transform: translateY(-5px); }
-    75% { transform: translateY(5px); }
-    100% { transform: translateY(0); }
-}
-
-.controls {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-bottom: 20px;
-}
-
-input {
-    width: 100px;
-    padding: 12px;
-    font-size: 20px;
-    text-align: center;
-    border: 2px solid gold;
-    border-radius: 30px;
-    background: #0f0f1f;
-    color: gold;
-}
-
-button {
-    background: gold;
-    color: black;
-    border: none;
-    padding: 12px 30px;
-    font-size: 22px;
-    font-weight: bold;
-    border-radius: 30px;
-    cursor: pointer;
-    transition: 0.1s;
-}
-
-button:active {
-    transform: translateY(2px);
-}
-
-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.message {
-    font-size: 18px;
-    margin: 20px 0;
-    padding: 10px;
-    color: gold;
-    min-height: 40px;
-}
-
-.win-table {
-    background: #0f0f1f;
-    padding: 15px;
-    border-radius: 20px;
-    border: 1px solid gold;
-}
-
-.win-table h3 {
-    color: gold;
-    margin-bottom: 10px;
-}
-
-.win-table div {
-    padding: 5px;
-    color: white;
+function spin() {
+    if (spinning) return;
+    
+    let bet = Number(betInput.value);
+    
+    if (bet < 1 || bet > balance) {
+        messageEl.textContent = '❌ Неверная ставка';
+        return;
+    }
+    
+    spinning = true;
+    spinBtn.disabled = true;
+    balance -= bet;
+    balanceEl.textContent = balance;
+    
+    slot1.classList.add('spinning');
+    slot2.classList.add('spinning');
+    slot3.classList.add('spinning');
+    
+    let count = 0;
+    const interval = setInterval(() => {
+        slot1.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        slot2.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        slot3.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        count++;
+        
+        if (count >= 15) {
+            clearInterval(interval);
+            finish();
+        }
+    }, 80);
+    
+    function finish() {
+        const r1 = symbols[Math.floor(Math.random() * symbols.length)];
+        const r2 = symbols[Math.floor(Math.random() * symbols.length)];
+        const r3 = symbols[Math.floor(Math.random() * symbols.length)];
+        
+        slot1.textContent = r1;
+        slot2.textContent = r2;
+        slot3.textContent = r3;
+        
+        slot1.classList.remove('spinning');
+        slot2.classList.remove('spinning');
+        slot3.classList.remove('spinning');
+        
+        let win = 0;
+        let msg = '';
+        
+        if (r1 === r2 && r2 === r3) {
+            win = bet * (r1 === '💎' ? 50 : 10);
+            msg = '🎉 ДЖЕКПОТ!';
+        } else if (r1 === r2 || r1 === r3 || r2 === r3) {
+            win = bet * 2;
+            msg = '👍 Неплохо!';
+        } else {
+            msg = '😢 Попробуй ещё';
+        }
+        
+        if (win > 0) {
+            balance += win;
+            balanceEl.textContent = balance;
+            messageEl.textContent = `${msg} +${win} 🪙`;
+        } else {
+            messageEl.textContent = msg;
+        }
+        
+        spinning = false;
+        spinBtn.disabled = false;
+    }
 }
