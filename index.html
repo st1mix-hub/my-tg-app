@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LUDKA CASINO</title>
+  <title>LUDKA CASINO DELUXE</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -29,18 +29,42 @@
         <label>Ставка:</label>
         <input type="number" id="bet" value="10" min="1" max="1000" class="bet-input">
       </div>
+      
+      <div class="quick-bets">
+        <button class="quick-bet" data-multiplier="2">x2</button>
+        <button class="quick-bet" data-multiplier="5">x5</button>
+        <button class="quick-bet" data-multiplier="10">x10</button>
+        <button class="quick-bet" data-multiplier="max">MAX</button>
+      </div>
+      
       <button class="spin-button" id="spinBtn">🎲 КРУТИТЬ</button>
     </div>
 
     <div class="message-area" id="message">🎲 Сделай ставку и крути!</div>
 
+    <div class="bonus-game" id="bonusGame">
+      <h2>🎁 БОНУСНЫЙ РАУНД!</h2>
+      <p>Выбери сундук:</p>
+      <div class="chests">
+        <div class="chest" id="chest1">📦</div>
+        <div class="chest" id="chest2">📦</div>
+        <div class="chest" id="chest3">📦</div>
+      </div>
+    </div>
+
     <div class="win-table">
       <h3>💎 Выигрыши:</h3>
-      <div class="win-row"><span>Три одинаковых</span> <span class="win-multiplier">x10</span></div>
       <div class="win-row"><span>Два одинаковых</span> <span class="win-multiplier">x2</span></div>
-      <div class="win-row"><span>Три 💎 алмаза</span> <span class="win-multiplier">x50</span></div>
+      <div class="win-row"><span>Три одинаковых</span> <span class="win-multiplier">x10</span></div>
+      <div class="win-row"><span>Три 💎 алмаза</span> <span class="win-multiplier">x50 + БОНУС</span></div>
     </div>
   </div>
+  
+  <audio id="spinSound" src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3"></audio>
+  <audio id="winSound" src="https://www.soundjay.com/misc/sounds/bell-ringing-08.mp3"></audio>
+  <audio id="loseSound" src="https://www.soundjay.com/misc/sounds/fail-buzzer-02.mp3"></audio>
+  <audio id="bonusSound" src="https://www.soundjay.com/misc/sounds/applause-1.mp3"></audio>
+  
   <script src="main.js"></script>
 </body>
 </html>
