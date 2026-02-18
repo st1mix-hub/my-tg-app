@@ -1,16 +1,49 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Моё первое Mini App</title>ъ
-    <script type="module" crossorigin src="/assets/index-DadkQg_Z.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-XlyKSLnJ.css">
-  </head>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LUDKA CASINO</title>
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
   <div id="app">
-    <h1>Привет, Telegram! 👋</h1>
-    <p>Это моё первое мини-приложение</p>
-    <button id="main-btn">Нажми меня</button>
+    <div class="casino-container">
+      <h1 class="title">🎰 LUDKA CASINO</h1>
+      
+      <div class="balance-box">
+        <span class="balance-label">Баланс:</span>
+        <span class="balance-value" id="balance">1000</span>
+        <span class="currency">🪙</span>
+      </div>
+
+      <div class="slot-machine">
+        <div class="reels" id="reels">
+          <div class="reel" id="reel1">🍒</div>
+          <div class="reel" id="reel2">🍒</div>
+          <div class="reel" id="reel3">🍒</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="bet-control">
+          <label>Ставка:</label>
+          <input type="number" id="bet" value="10" min="1" max="1000" class="bet-input">
+        </div>
+        
+        <button class="spin-button" id="spinBtn">🎲 КРУТИТЬ</button>
+      </div>
+
+      <div class="message-area" id="message"></div>
+
+      <div class="win-table">
+        <h3>💎 Выигрыши:</h3>
+        <div class="win-row"><span>Три одинаковых</span> <span class="win-multiplier">x10</span></div>
+        <div class="win-row"><span>Два одинаковых</span> <span class="win-multiplier">x2</span></div>
+        <div class="win-row"><span>Три 💎 алмаза</span> <span class="win-multiplier">x50</span></div>
+      </div>
+    </div>
   </div>
+  <script type="module" src="/src/main.js"></script>
+</body>
 </html>
