@@ -622,6 +622,11 @@ body {
   font-size: 11px;
 }
 
+.stats-detail span:last-child {
+  color: gold;
+  font-weight: 700;
+}
+
 /* Достижения */
 .achievements-section {
   background: rgba(0,0,0,0.3);
