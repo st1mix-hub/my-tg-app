@@ -64,46 +64,44 @@
       </div>
     </div>
 
-    <!-- Вкладка ROCKET (НОВАЯ) -->
+    <!-- Вкладка ROCKET -->
     <div class="tab-content fade-in" id="rocket-tab">
       <div class="rocket-card">
         <h1 class="neon-title">🚀 ROCKET</h1>
         
         <div class="rocket-display">
-          <!-- Таймер посередине (для ставки) -->
+          <!-- Таймер для ставки (после падения) -->
           <div class="bet-timer" id="betTimer">
             ⏰ СТАВКА: <span>5с</span>
           </div>
           
-          <div class="rocket-container">
-            <div class="rocket-wrapper">
-              <div class="rocket-model" id="rocket">
-                <div class="rocket-body">🚀</div>
-                <div class="rocket-fire" id="rocketFire">🔥</div>
-              </div>
-            </div>
-            
-            <!-- Полоска снизу ракетки -->
-            <div class="rocket-trail" id="rocketTrail">
-              <div class="trail-glow"></div>
-            </div>
+          <!-- Прогресс полёта -->
+          <div class="flight-progress">
+            <div class="progress-bar" id="progressBar"></div>
           </div>
           
-          <!-- Множитель справа -->
+          <div class="rocket-container" id="rocketContainer">
+            <div class="rocket-model" id="rocket">🚀</div>
+          </div>
+          
+          <!-- Множитель -->
           <div class="multiplier-display" id="multiplier">1.00x</div>
         </div>
 
-        <!-- История крашей -->
-        <div class="crash-history" id="crashHistory"></div>
+        <!-- Статистика последних игр -->
+        <div class="stats-panel">
+          <div class="stats-title">📊 ПОСЛЕДНИЕ 10 ИГР</div>
+          <div class="crash-history" id="crashHistory"></div>
+        </div>
 
         <div class="rocket-controls">
-          <!-- Панель ставки (только ручной ввод) -->
+          <!-- Панель ставки -->
           <div class="bet-panel">
             <label>💰 СТАВКА</label>
             <input type="number" id="rocketBet" value="10" min="1" max="1000" class="neon-input rocket-bet-input">
           </div>
 
-          <!-- Кнопка ставки (активна только когда ракета упала) -->
+          <!-- Кнопка ставки -->
           <button class="place-bet-btn" id="placeBetBtn">📌 СДЕЛАТЬ СТАВКУ</button>
 
           <!-- Активная ставка -->
