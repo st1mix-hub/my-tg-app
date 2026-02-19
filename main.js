@@ -55,15 +55,18 @@ if (tg.initDataUnsafe?.user) {
   }
 }
 
-// Переключение вкладок
+// ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК (самое важное!)
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
+    // Убираем active со всех вкладок
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     
+    // Активируем выбранную вкладку
     tab.classList.add('active');
     document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
     
+    // Обновляем статистику при переходе в профиль
     if (tab.dataset.tab === 'profile') {
       updateProfileStats();
     }
@@ -146,6 +149,7 @@ function updateProfileStats() {
   achFirst.textContent = gamesPlayed >= 1 ? '✅' : '❌';
   achTen.textContent = gamesPlayed >= 10 ? '✅' : '❌';
   achHundred.textContent = gamesPlayed >= 100 ? '✅' : '❌';
+  achJackpot.textContent = bestWin >= currentBet * 50 ? '✅' : '❌';
   achRich.textContent = balance >= 5000 ? '✅' : '❌';
 }
 
