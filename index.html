@@ -70,18 +70,28 @@
         <h1 class="neon-title">🚀 ROCKET</h1>
         
         <div class="rocket-display">
-          <!-- Таймер посередине над ракетой -->
+          <!-- Таймер посередине -->
           <div class="launch-timer" id="launchTimer">🚀 5с</div>
           
           <div class="rocket-container">
             <div class="rocket-wrapper">
               <div class="rocket" id="rocket">🚀</div>
-              <!-- Шкала полёта слева -->
-              <div class="flight-scale" id="flightScale">
-                <div class="scale-fill" id="scaleFill"></div>
+              <!-- Шкала как в EpicBot -->
+              <div class="epic-scale" id="epicScale">
+                <div class="scale-markers">
+                  <span>1x</span>
+                  <span>2x</span>
+                  <span>3x</span>
+                  <span>5x</span>
+                  <span>10x</span>
+                </div>
+                <div class="scale-bar">
+                  <div class="scale-fill" id="scaleFill"></div>
+                </div>
+                <div class="scale-current" id="scaleCurrent">1.00x</div>
               </div>
             </div>
-            <div class="flight-path" id="flightPath"></div>
+            <div class="flight-path"></div>
           </div>
           
           <!-- Множитель справа -->
@@ -218,7 +228,7 @@
     </div>
   </div>
 
-  <!-- Бонусный раунд (для казино) -->
+  <!-- Бонусный раунд -->
   <div class="bonus-overlay" id="bonusGame">
     <div class="bonus-card">
       <h2>🎁 БОНУСНЫЙ РАУНД</h2>
