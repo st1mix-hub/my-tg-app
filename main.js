@@ -50,6 +50,7 @@ const rocket = document.getElementById('rocket');
 const multiplierDisplay = document.getElementById('multiplier');
 const launchTimer = document.getElementById('launchTimer');
 const scaleFill = document.getElementById('scaleFill');
+const scaleCurrent = document.getElementById('scaleCurrent');
 const placeBetBtn = document.getElementById('placeBetBtn');
 const cashoutBtn = document.getElementById('cashoutBtn');
 const rocketBetInput = document.getElementById('rocketBet');
@@ -249,6 +250,7 @@ function spin() {
 
 // ========== ФУНКЦИИ РАКЕТЫ ==========
 
+// Генерация точки краша
 function generateCrashPoint() {
   const r = Math.random();
   if (r < 0.3) return 1.2;
@@ -259,6 +261,7 @@ function generateCrashPoint() {
   return 10.0;
 }
 
+// Добавление в историю
 function addToHistory(multiplier, isCrash) {
   const item = document.createElement('div');
   item.className = 'crash-history-item' + (isCrash ? ' crash' : '');
@@ -271,6 +274,7 @@ function addToHistory(multiplier, isCrash) {
   }
 }
 
+// Обновление таймера
 function updateTimer() {
   const now = Date.now();
   const timeLeft = Math.max(0, Math.ceil((nextLaunchTime - now) / 1000));
@@ -285,6 +289,7 @@ function updateTimer() {
   }
 }
 
+// Запуск полёта
 function startRocketFlight() {
   rocketState = 'flying';
   currentMultiplier = 1.0;
@@ -296,51 +301,59 @@ function startRocketFlight() {
     multiplierDisplay.style.color = 'gold';
   }
   
+  if (scaleCurrent) scaleCurrent.textContent = '1.00x';
+  
   if (rocket) {
     rocket.style.bottom = '0px';
     rocket.style.transform = 'none';
   }
   
   if (scaleFill) {
-    scaleFill.style.height = '0%';
-    scaleFill.style.background = 'linear-gradient(0deg, #4caf50, gold, #ff6b6b)';
+    scaleFill.style.width = '0%';
   }
   
   if (rocketInterval) clearInterval(rocketInterval);
   
-  let height = 0;
   rocketInterval = setInterval(() => {
     if (rocketState !== 'flying') return;
     
     currentMultiplier += 0.01;
+    
+    // Обновление отображения
     if (multiplierDisplay) {
       multiplierDisplay.textContent = currentMultiplier.toFixed(2) + 'x';
     }
     
-    height = Math.min(100, height + 1.5);
-    if (rocket) rocket.style.bottom = height + 'px';
-    
-    if (scaleFill) {
-      const scalePercent = (currentMultiplier / 10) * 100;
-      scaleFill.style.height = Math.min(100, scalePercent) + '%';
+    if (scaleCurrent) {
+      scaleCurrent.textContent = currentMultiplier.toFixed(2) + 'x';
     }
     
+    // Обновление шкалы (до 10x = 100%)
+    if (scaleFill) {
+      const scalePercent = Math.min(100, (currentMultiplier / 10) * 100);
+      scaleFill.style.width = scalePercent + '%';
+    }
+    
+    // Изменение цвета в зависимости от множителя
     if (currentMultiplier > 3 && multiplierDisplay) {
       multiplierDisplay.style.color = '#ff6b6b';
     } else if (currentMultiplier > 2 && multiplierDisplay) {
       multiplierDisplay.style.color = '#ffd700';
     }
     
+    // Обновление потенциального выигрыша
     if (activeRocketBet && potentialWin) {
       potentialWin.textContent = Math.floor(activeRocketBet.amount * currentMultiplier);
     }
     
+    // Проверка на краш
     if (currentMultiplier >= crashPoint) {
       crashRocket();
     }
   }, 50);
 }
 
+// Краш ракеты
 function crashRocket() {
   rocketState = 'crashed';
   if (rocketInterval) clearInterval(rocketInterval);
@@ -350,13 +363,12 @@ function crashRocket() {
     multiplierDisplay.style.color = '#ff6b6b';
   }
   
-  if (rocket) {
-    rocket.style.transform = 'rotate(180deg)';
+  if (scaleCurrent) {
+    scaleCurrent.textContent = 'CRASH!';
   }
   
-  if (scaleFill) {
-    scaleFill.style.height = '0%';
-    scaleFill.style.background = '#ff6b6b';
+  if (rocket) {
+    rocket.style.transform = 'rotate(180deg)';
   }
   
   addToHistory(crashPoint, true);
@@ -368,10 +380,14 @@ function crashRocket() {
     }
   }
   
+  // Если была активная ставка - проигрыш
   if (activeRocketBet) {
     activeRocketBet = null;
     if (activeBetDiv) activeBetDiv.style.display = 'none';
   }
+  
+  // Блокируем кнопку ставки на время таймера
+  if (placeBetBtn) placeBetBtn.disabled = true;
   
   nextLaunchTime = Date.now() + 5000;
   
@@ -380,11 +396,12 @@ function crashRocket() {
   
   setTimeout(() => {
     rocketState = 'waiting';
-    if (scaleFill) scaleFill.style.background = 'linear-gradient(0deg, #4caf50, gold, #ff6b6b)';
+    if (placeBetBtn) placeBetBtn.disabled = false;
     startRocketFlight();
   }, 5000);
 }
 
+// Забрать выигрыш
 function cashoutRocket() {
   if (!activeRocketBet || rocketState !== 'flying') return;
   
@@ -406,6 +423,10 @@ function cashoutRocket() {
     }, 200);
   }
   
+  if (scaleCurrent) {
+    scaleCurrent.style.color = '#4caf50';
+  }
+  
   activeRocketBet = null;
   if (activeBetDiv) activeBetDiv.style.display = 'none';
   
@@ -414,6 +435,7 @@ function cashoutRocket() {
   }
 }
 
+// Поставить ставку (ТОЛЬКО ОДИН РАЗ)
 function placeBet() {
   if (rocketState !== 'flying' || activeRocketBet) return;
   
@@ -434,6 +456,9 @@ function placeBet() {
   if (activeBetDiv) activeBetDiv.style.display = 'block';
   if (currentBetAmount) currentBetAmount.textContent = bet;
   if (potentialWin) potentialWin.textContent = Math.floor(bet * currentMultiplier);
+  
+  // Блокируем кнопку ставки после размещения
+  if (placeBetBtn) placeBetBtn.disabled = true;
 }
 
 // ========== ОБЩИЕ ФУНКЦИИ ==========
