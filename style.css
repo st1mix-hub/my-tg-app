@@ -61,6 +61,15 @@ body {
   text-shadow: 0 0 5px rgba(255,255,255,0.5);
 }
 
+/* Контент вкладок */
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
 /* Карточки */
 .casino-card, .profile-card {
   padding: 20px 16px;
@@ -235,7 +244,7 @@ body {
   50% { box-shadow: 0 0 30px gold, 0 0 40px orange; }
 }
 
-/* PROFILE - НОВЫЙ ДИЗАЙН */
+/* PROFILE - полный дизайн */
 .profile-glow {
   position: absolute;
   top: 0;
