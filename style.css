@@ -194,6 +194,11 @@ body {
   width: 90px;
   border-radius: 30px;
   text-align: center;
+  outline: none;
+}
+
+.neon-input:focus {
+  box-shadow: 0 0 15px gold;
 }
 
 .quick-bets {
@@ -244,7 +249,7 @@ body {
   50% { box-shadow: 0 0 30px gold, 0 0 40px orange; }
 }
 
-/* УЛУЧШЕННЫЙ ROCKET MODE STYLES */
+/* УЛУЧШЕННАЯ ШКАЛА КАК В EPICBOT */
 .rocket-display {
   background: #0a0a14;
   border-radius: 30px;
@@ -253,7 +258,7 @@ body {
   border: 2px solid gold;
   position: relative;
   overflow: hidden;
-  height: 220px;
+  height: 260px;
 }
 
 .launch-timer {
@@ -280,7 +285,7 @@ body {
 
 .rocket-container {
   position: relative;
-  height: 160px;
+  height: 200px;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -291,7 +296,7 @@ body {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 30px;
 }
 
 .rocket {
@@ -310,24 +315,47 @@ body {
   75% { transform: translateX(2px); }
 }
 
-.flight-scale {
-  width: 30px;
-  height: 150px;
+.epic-scale {
+  width: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.scale-markers {
+  display: flex;
+  justify-content: space-between;
+  color: gold;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 0 2px;
+}
+
+.scale-bar {
+  width: 100%;
+  height: 12px;
   background: rgba(0,0,0,0.5);
-  border: 2px solid gold;
+  border: 1px solid gold;
   border-radius: 20px;
-  position: relative;
   overflow: hidden;
+  position: relative;
 }
 
 .scale-fill {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background: linear-gradient(0deg, #4caf50, gold, #ff6b6b);
-  height: 0%;
-  transition: height 0.05s linear;
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #4caf50, gold, #ff6b6b);
+  transition: width 0.05s linear;
+  border-radius: 20px;
+}
+
+.scale-current {
+  text-align: center;
+  color: gold;
+  font-size: 14px;
+  font-weight: 700;
+  text-shadow: 0 0 5px gold;
+  margin-top: 2px;
 }
 
 .flight-path {
@@ -380,6 +408,12 @@ body {
   font-size: 14px;
   font-weight: 600;
   border: 1px solid gold;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
 
 .crash-history-item.crash {
@@ -411,7 +445,7 @@ body {
   box-shadow: 0 0 15px #4caf50;
 }
 
-.place-bet-btn:hover {
+.place-bet-btn:hover:not(:disabled) {
   transform: scale(1.05);
   box-shadow: 0 0 25px #4caf50;
 }
@@ -419,6 +453,7 @@ body {
 .place-bet-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .active-bet {
@@ -462,7 +497,7 @@ body {
   transition: 0.2s;
 }
 
-.cashout-btn:hover {
+.cashout-btn:hover:not(:disabled) {
   transform: scale(1.02);
   box-shadow: 0 0 25px gold;
 }
@@ -489,7 +524,7 @@ body {
   text-align: center;
 }
 
-/* PROFILE STYLES */
+/* PROFILE STYLES (остаются без изменений) */
 .profile-glow {
   position: absolute;
   top: 0;
