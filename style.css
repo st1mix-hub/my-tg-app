@@ -254,39 +254,16 @@ body {
   background: #0a0a14;
   border-radius: 30px;
   padding: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   border: 2px solid gold;
   position: relative;
   overflow: hidden;
   height: 280px;
 }
 
-.bet-timer {
-  position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 20px;
-  font-weight: 800;
-  color: gold;
-  text-shadow: 0 0 15px gold;
-  background: rgba(0,0,0,0.7);
-  padding: 8px 20px;
-  border-radius: 40px;
-  border: 1px solid gold;
-  z-index: 20;
-  animation: timerPulse 1s infinite;
-  display: none;
-}
-
-@keyframes timerPulse {
-  0%, 100% { transform: translateX(-50%) scale(1); }
-  50% { transform: translateX(-50%) scale(1.05); }
-}
-
 .flight-progress {
   position: absolute;
-  top: 80px;
+  top: 20px;
   left: 20px;
   right: 20px;
   height: 6px;
@@ -304,21 +281,22 @@ body {
   border-radius: 10px;
 }
 
-.rocket-container {
+.rocket-flight-area {
   position: absolute;
   bottom: 30px;
   left: 50%;
   transform: translateX(-50%);
-  width: 60px;
+  width: 100%;
   height: 200px;
-  display: flex;
-  flex-direction: column-reverse;
-  align-items: center;
   z-index: 10;
 }
 
 .rocket-model {
   font-size: 48px;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
   filter: drop-shadow(0 0 15px gold);
   transition: transform 0.05s linear;
   transform-origin: bottom center;
@@ -326,7 +304,7 @@ body {
 
 .multiplier-display {
   position: absolute;
-  top: 20px;
+  top: 40px;
   right: 20px;
   font-size: 36px;
   font-weight: 800;
@@ -339,6 +317,26 @@ body {
 @keyframes multiplierFloat {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.05); }
+}
+
+.bet-timer {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 800;
+  color: gold;
+  text-shadow: 0 0 15px gold;
+  background: rgba(0,0,0,0.7);
+  padding: 10px;
+  border-radius: 40px;
+  border: 1px solid gold;
+  margin-bottom: 15px;
+  animation: timerPulse 1s infinite;
+  display: none;
+}
+
+@keyframes timerPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
 }
 
 .stats-panel {
@@ -383,32 +381,72 @@ body {
   background: rgba(255,107,107,0.1);
 }
 
-/* Кнопки ставок */
-.rocket-bet-input {
-  width: 100% !important;
+/* Баланс и ставка в одной строке */
+.balance-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
 }
 
-.place-bet-btn {
-  width: 100%;
-  background: linear-gradient(145deg, #4caf50, #45a049);
-  color: white;
-  border: none;
-  padding: 16px;
-  font-size: 18px;
-  font-weight: 700;
+.balance-mini {
+  flex: 1;
+  background: linear-gradient(145deg, #2a2a3a, #1a1a2a);
   border-radius: 40px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 1px solid gold;
+  color: gold;
+  font-weight: 700;
+}
+
+.bet-mini {
+  flex: 1;
+}
+
+.neon-input-small {
+  width: 100%;
+  background: #1a1a2a;
+  border: 1px solid gold;
+  color: gold;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 12px;
+  border-radius: 40px;
+  text-align: center;
+  outline: none;
+}
+
+/* Динамическая кнопка */
+.dynamic-btn {
+  width: 100%;
+  padding: 18px;
+  font-size: 20px;
+  font-weight: 800;
+  border: none;
+  border-radius: 50px;
   cursor: pointer;
   transition: 0.2s;
-  margin: 10px 0;
-  box-shadow: 0 0 15px #4caf50;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-.place-bet-btn:hover:not(:disabled) {
-  transform: scale(1.02);
-  box-shadow: 0 0 25px #4caf50;
+.dynamic-btn.bet-mode {
+  background: linear-gradient(145deg, #4caf50, #45a049);
+  color: white;
+  box-shadow: 0 0 20px #4caf50;
 }
 
-.place-bet-btn:disabled {
+.dynamic-btn.cashout-mode {
+  background: linear-gradient(145deg, gold, #ffd700);
+  color: #1a1a2e;
+  box-shadow: 0 0 20px gold;
+}
+
+.dynamic-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   box-shadow: none;
@@ -417,8 +455,8 @@ body {
 .active-bet {
   background: linear-gradient(145deg, #2a2a3a, #1a1a2a);
   border-radius: 30px;
-  padding: 15px;
-  margin: 15px 0;
+  padding: 12px;
+  margin-bottom: 15px;
   border: 2px solid gold;
   animation: glowPulse 1s infinite;
 }
@@ -431,7 +469,6 @@ body {
 .active-bet-info {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 15px;
   color: gold;
   font-size: 16px;
 }
@@ -441,41 +478,17 @@ body {
   color: #4caf50;
 }
 
-.cashout-btn {
-  width: 100%;
-  padding: 16px;
-  font-size: 18px;
-  font-weight: 700;
-  border: none;
-  border-radius: 30px;
-  cursor: pointer;
-  background: linear-gradient(145deg, gold, #ffd700);
-  color: #1a1a2e;
-  box-shadow: 0 0 15px gold;
-  transition: 0.2s;
-}
-
-.cashout-btn:hover:not(:disabled) {
-  transform: scale(1.02);
-  box-shadow: 0 0 25px gold;
-}
-
-.cashout-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
 .rocket-stats {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
-  margin-top: 20px;
+  margin-top: 15px;
 }
 
 .rocket-stats .stat-item {
   background: rgba(255,215,0,0.1);
   border-radius: 15px;
-  padding: 12px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   gap: 5px;
