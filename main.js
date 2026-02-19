@@ -1,4 +1,3 @@
-// Telegram WebApp
 const tg = window.Telegram.WebApp;
 tg.expand();
 
@@ -27,11 +26,10 @@ const balanceSpan = document.getElementById('balance');
 const messageDiv = document.getElementById('message');
 const bonusGame = document.getElementById('bonusGame');
 const chests = document.querySelectorAll('.chest');
-const quickBetBtns = document.querySelectorAll('.quick-bet');
+const quickBetBtns = document.querySelectorAll('.chip');
 
 // Элементы профиля
 const usernameEl = document.getElementById('username');
-const userIdEl = document.getElementById('userId');
 const avatarEl = document.getElementById('avatar');
 const gamesPlayedEl = document.getElementById('gamesPlayed');
 const winsEl = document.getElementById('wins');
@@ -47,21 +45,13 @@ const achHundred = document.getElementById('achHundredStatus');
 const achJackpot = document.getElementById('achJackpotStatus');
 const achRich = document.getElementById('achRichStatus');
 
-// Звуки
-const spinSound = document.getElementById('spinSound');
-const winSound = document.getElementById('winSound');
-const loseSound = document.getElementById('loseSound');
-const bonusSound = document.getElementById('bonusSound');
-
 // Telegram данные
 if (tg.initDataUnsafe?.user) {
   const user = tg.initDataUnsafe.user;
-  usernameEl.textContent = user.username ? `@${user.username}` : `${user.first_name} ${user.last_name || ''}`;
-  userIdEl.textContent = `ID: ${user.id}`;
+  usernameEl.textContent = user.username ? `@${user.username}` : user.first_name;
   
-  // Аватарка (если есть фото)
   if (user.photo_url) {
-    avatarEl.innerHTML = `<img src="${user.photo_url}" style="width:80px;height:80px;border-radius:50%;">`;
+    avatarEl.innerHTML = `<img src="${user.photo_url}" style="width:70px;height:70px;border-radius:50%;">`;
   }
 }
 
@@ -90,6 +80,10 @@ quickBetBtns.forEach(btn => {
       currentBet = Math.min(10 * parseInt(multiplier), balance);
     }
     betInput.value = currentBet;
+    
+    // Эффект
+    btn.style.transform = 'scale(0.9)';
+    setTimeout(() => btn.style.transform = 'scale(1)', 100);
   });
 });
 
@@ -110,8 +104,11 @@ chests.forEach((chest, index) => {
     
     updateBalance();
     messageDiv.textContent = `🎁 БОНУС! +${win} 🪙`;
+    messageDiv.style.color = 'gold';
     
-    winSound.play();
+    // Эффект
+    balanceSpan.classList.add('pulse');
+    setTimeout(() => balanceSpan.classList.remove('pulse'), 300);
     
     setTimeout(() => {
       bonusGame.style.display = 'none';
@@ -126,14 +123,13 @@ chests.forEach((chest, index) => {
 
 spinBtn.onclick = spin;
 
-function playSound(sound) {
-  sound.currentTime = 0;
-  sound.play().catch(e => console.log('Звук не загрузился'));
-}
-
 function updateBalance() {
   balanceSpan.textContent = balance;
   profileBalanceEl.textContent = `${balance} 🪙`;
+  
+  // Эффект пульсации
+  balanceSpan.classList.add('pulse');
+  setTimeout(() => balanceSpan.classList.remove('pulse'), 300);
 }
 
 function updateProfileStats() {
@@ -143,6 +139,9 @@ function updateProfileStats() {
   totalWonEl.textContent = `${totalWon} 🪙`;
   bestWinEl.textContent = `${bestWin} 🪙`;
   
+  // Анимация цифр
+  animateValue(gamesPlayedEl, 0, gamesPlayed, 500);
+  
   // Достижения
   achFirst.textContent = gamesPlayed >= 1 ? '✅' : '❌';
   achTen.textContent = gamesPlayed >= 10 ? '✅' : '❌';
@@ -150,11 +149,20 @@ function updateProfileStats() {
   achRich.textContent = balance >= 5000 ? '✅' : '❌';
 }
 
-function checkAchievements() {
-  if (gamesPlayed >= 1) achFirst.textContent = '✅';
-  if (gamesPlayed >= 10) achTen.textContent = '✅';
-  if (gamesPlayed >= 100) achHundred.textContent = '✅';
-  if (balance >= 5000) achRich.textContent = '✅';
+function animateValue(element, start, end, duration) {
+  const range = end - start;
+  const increment = range / (duration / 10);
+  let current = start;
+  
+  const timer = setInterval(() => {
+    current += increment;
+    if (current >= end) {
+      element.textContent = end;
+      clearInterval(timer);
+    } else {
+      element.textContent = Math.round(current);
+    }
+  }, 10);
 }
 
 function spin() {
@@ -163,6 +171,7 @@ function spin() {
   let bet = Number(betInput.value);
   if (bet < 1 || bet > balance) {
     messageDiv.textContent = '❌ Неверная ставка';
+    messageDiv.style.color = '#ff6b6b';
     return;
   }
   
@@ -174,7 +183,9 @@ function spin() {
   
   gamesPlayed++;
   
-  playSound(spinSound);
+  // Эффекты
+  messageDiv.textContent = '🎰 Вращаем...';
+  messageDiv.style.color = 'gold';
   
   reel1.classList.add('spinning');
   reel2.classList.add('spinning');
@@ -186,6 +197,7 @@ function spin() {
     reel2.textContent = symbols[Math.floor(Math.random() * symbols.length)];
     reel3.textContent = symbols[Math.floor(Math.random() * symbols.length)];
     count++;
+    
     if (count > 15) {
       clearInterval(interval);
       finish();
@@ -208,33 +220,27 @@ function spin() {
     let win = 0;
     let message = '';
     
-    // Проверка выигрыша
     if (r1 === r2 && r2 === r3) {
       wins++;
       if (r1 === '💎') {
         win = bet * 50;
-        message = `🎉 ДЖЕКПОТ x50! +${win} 🪙`;
-        playSound(winSound);
+        message = `🎉 ДЖЕКПОТ! +${win} 🪙`;
         achJackpot.textContent = '✅';
         
         setTimeout(() => {
-          bonusGame.style.display = 'block';
+          bonusGame.style.display = 'flex';
           bonusActive = true;
-          playSound(bonusSound);
         }, 500);
       } else {
         win = bet * 10;
         message = `🎉 ТРИ ОДИНАКОВЫХ! +${win} 🪙`;
-        playSound(winSound);
       }
     } else if (r1 === r2 || r1 === r3 || r2 === r3) {
       wins++;
       win = bet * 2;
       message = `👍 ДВА ОДИНАКОВЫХ! +${win} 🪙`;
-      playSound(winSound);
     } else {
       message = '😢 Повезёт в следующий раз';
-      playSound(loseSound);
     }
     
     if (win > 0) {
@@ -242,13 +248,29 @@ function spin() {
       totalWon += win;
       if (win > bestWin) bestWin = win;
       updateBalance();
+      messageDiv.style.color = '#4caf50';
+    } else {
+      messageDiv.style.color = '#ff6b6b';
     }
     
     messageDiv.textContent = message;
+    
+    // Эффект на балансе при выигрыше
+    if (win > 0) {
+      balanceSpan.classList.add('pulse');
+      setTimeout(() => balanceSpan.classList.remove('pulse'), 500);
+    }
     
     checkAchievements();
     
     spinning = false;
     spinBtn.disabled = false;
   }
+}
+
+function checkAchievements() {
+  if (gamesPlayed >= 1) achFirst.textContent = '✅';
+  if (gamesPlayed >= 10) achTen.textContent = '✅';
+  if (gamesPlayed >= 100) achHundred.textContent = '✅';
+  if (balance >= 5000) achRich.textContent = '✅';
 }
