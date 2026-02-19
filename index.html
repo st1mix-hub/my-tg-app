@@ -8,14 +8,16 @@
 </head>
 <body>
   <div class="app glass-effect">
-    <!-- Вкладки (только здесь!) -->
+    <!-- Вкладки (ТЕПЕРЬ ТРИ) -->
     <div class="tabs neon-tabs">
       <button class="tab active" data-tab="spins">🎰 SPINS</button>
+      <button class="tab" data-tab="rocket">🚀 ROCKET</button>
       <button class="tab" data-tab="profile">👑 PROFILE</button>
     </div>
 
     <!-- Вкладка SPINS (казино) -->
     <div class="tab-content active fade-in" id="spins-tab">
+      <!-- ... существующий код казино ... -->
       <div class="casino-card">
         <h1 class="neon-title">✨ LUDKA ✨</h1>
         
@@ -63,8 +65,56 @@
       </div>
     </div>
 
-    <!-- Вкладка PROFILE (отдельно, не снизу!) -->
+    <!-- Вкладка ROCKET (НОВАЯ!) -->
+    <div class="tab-content fade-in" id="rocket-tab">
+      <div class="rocket-card">
+        <h1 class="neon-title">🚀 ROCKET CRASH</h1>
+        
+        <div class="rocket-display">
+          <div class="rocket-container">
+            <div class="rocket" id="rocket">🚀</div>
+            <div class="flight-path" id="flightPath"></div>
+          </div>
+          <div class="multiplier-display" id="multiplier">1.00x</div>
+        </div>
+
+        <div class="crash-history" id="crashHistory">
+          <!-- Сюда будут добавляться прошлые множители -->
+        </div>
+
+        <div class="rocket-controls">
+          <div class="bet-panel">
+            <label>💰 СТАВКА</label>
+            <input type="number" id="rocketBet" value="10" min="1" max="1000" class="neon-input">
+          </div>
+
+          <div class="rocket-buttons">
+            <button class="rocket-btn launch-btn" id="launchBtn" disabled>🚀 ЗАПУСТИТЬ</button>
+            <button class="rocket-btn cashout-btn" id="cashoutBtn" disabled>💸 ЗАБРАТЬ</button>
+          </div>
+
+          <div class="auto-cashout">
+            <label>🎯 АВТО-ЗАБОР</label>
+            <input type="number" id="autoCashout" value="2.0" min="1.1" max="10" step="0.1" class="neon-input">
+          </div>
+        </div>
+
+        <div class="rocket-stats">
+          <div class="stat-item">
+            <span>🔥 ТОП МНОЖИТЕЛЬ</span>
+            <span class="neon-text" id="topMultiplier">1.00x</span>
+          </div>
+          <div class="stat-item">
+            <span>💵 ВЫИГРАНО ВСЕГО</span>
+            <span class="neon-text" id="rocketTotalWon">0 🪙</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Вкладка PROFILE (как была) -->
     <div class="tab-content fade-in" id="profile-tab">
+      <!-- ... существующий код профиля ... -->
       <div class="profile-card">
         <div class="profile-glow"></div>
         
@@ -156,7 +206,7 @@
     </div>
   </div>
 
-  <!-- Бонусный раунд (всплывающее окно) -->
+  <!-- Бонусный раунд (для казино) -->
   <div class="bonus-overlay" id="bonusGame">
     <div class="bonus-card">
       <h2>🎁 БОНУСНЫЙ РАУНД</h2>
