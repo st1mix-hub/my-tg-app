@@ -46,11 +46,10 @@ const achJackpot = document.getElementById('achJackpotStatus');
 const achRich = document.getElementById('achRichStatus');
 
 // ========== ЭЛЕМЕНТЫ РАКЕТЫ ==========
-const rocket = document.querySelector('.rocket-body');
-const rocketFire = document.getElementById('rocketFire');
-const rocketTrail = document.getElementById('rocketTrail');
+const rocket = document.getElementById('rocket');
 const multiplierDisplay = document.getElementById('multiplier');
 const betTimer = document.getElementById('betTimer');
+const progressBar = document.getElementById('progressBar');
 const placeBetBtn = document.getElementById('placeBetBtn');
 const cashoutBtn = document.getElementById('cashoutBtn');
 const rocketBetInput = document.getElementById('rocketBet');
@@ -71,6 +70,7 @@ let nextLaunchTime = 0;
 let activeRocketBet = null;
 let rocketTotalWon = 0;
 let topMultiplier = 1.0;
+let launchCountdown = null;
 
 // ========== TELEGRAM ДАННЫЕ ==========
 if (tg.initDataUnsafe?.user) {
@@ -250,17 +250,15 @@ function spin() {
 
 // ========== ФУНКЦИИ РАКЕТЫ ==========
 
-// Генерация случайного множителя краша (не целые числа)
+// Генерация случайного множителя краша (от 1.1 до 10.0)
 function generateCrashPoint() {
-  // Генерируем случайное число от 1.1 до 10.0 с двумя знаками после запятой
-  const base = Math.random() * 9 + 1.1;
-  return Math.round(base * 100) / 100;
+  return Math.round((Math.random() * 8.9 + 1.1) * 100) / 100;
 }
 
 // Добавление в историю
-function addToHistory(multiplier, isCrash) {
+function addToHistory(multiplier) {
   const item = document.createElement('div');
-  item.className = 'crash-history-item' + (isCrash ? ' crash' : '');
+  item.className = 'crash-history-item crash';
   item.textContent = multiplier.toFixed(2) + 'x';
   
   crashHistory.insertBefore(item, crashHistory.firstChild);
@@ -278,14 +276,17 @@ function updateBetTimer() {
   if (betTimer) {
     const timerSpan = betTimer.querySelector('span');
     if (timerSpan) timerSpan.textContent = timeLeft + 'с';
-    betTimer.style.display = rocketState === 'waiting' ? 'block' : 'none';
+    
+    // Показываем таймер только когда ракета упала и идёт отсчёт
+    betTimer.style.display = (rocketState === 'waiting' && timeLeft > 0) ? 'block' : 'none';
   }
   
-  // Включаем кнопку ставки только когда ракета упала и идёт таймер
+  // Кнопка ставки активна ТОЛЬКО когда ракета упала и идёт таймер
   if (placeBetBtn) {
-    placeBetBtn.disabled = rocketState !== 'waiting' || activeRocketBet !== null;
+    placeBetBtn.disabled = !(rocketState === 'waiting' && timeLeft > 0) || activeRocketBet !== null;
   }
   
+  // Если время вышло - запускаем новый полёт
   if (timeLeft <= 0 && rocketState === 'waiting') {
     startRocketFlight();
   }
@@ -306,18 +307,13 @@ function startRocketFlight() {
     multiplierDisplay.style.color = 'gold';
   }
   
+  if (progressBar) {
+    progressBar.style.width = '0%';
+  }
+  
   // Сбрасываем позицию ракеты
   if (rocket) {
     rocket.style.transform = 'translateY(0)';
-  }
-  
-  if (rocketFire) {
-    rocketFire.style.opacity = '1';
-  }
-  
-  // Сбрасываем хвост
-  if (rocketTrail) {
-    rocketTrail.style.height = '0px';
   }
   
   if (rocketInterval) clearInterval(rocketInterval);
@@ -334,22 +330,25 @@ function startRocketFlight() {
       multiplierDisplay.textContent = currentMultiplier.toFixed(2) + 'x';
     }
     
-    // Подъём ракеты (до 80px)
-    height = Math.min(80, height + 0.8);
+    // Подъём ракеты (плавно вверх)
+    height = Math.min(150, height + 1);
     if (rocket) {
       rocket.style.transform = `translateY(-${height}px)`;
     }
     
-    // Хвост становится длиннее
-    if (rocketTrail) {
-      rocketTrail.style.height = (height * 0.5) + 'px';
+    // Прогресс-бар
+    if (progressBar) {
+      const progress = Math.min(100, (currentMultiplier / 10) * 100);
+      progressBar.style.width = progress + '%';
     }
     
     // Изменение цвета в зависимости от множителя
-    if (currentMultiplier > 3 && multiplierDisplay) {
-      multiplierDisplay.style.color = '#ff6b6b';
-    } else if (currentMultiplier > 2 && multiplierDisplay) {
-      multiplierDisplay.style.color = '#ffd700';
+    if (multiplierDisplay) {
+      if (currentMultiplier > 3) {
+        multiplierDisplay.style.color = '#ff6b6b';
+      } else if (currentMultiplier > 2) {
+        multiplierDisplay.style.color = '#ffd700';
+      }
     }
     
     // Обновление потенциального выигрыша
@@ -369,7 +368,7 @@ function crashRocket() {
   rocketState = 'crashed';
   if (rocketInterval) clearInterval(rocketInterval);
   
-  // Просто показываем множитель краша (без слова CRASH)
+  // Показываем множитель краша
   if (multiplierDisplay) {
     multiplierDisplay.textContent = crashPoint.toFixed(2) + 'x';
     multiplierDisplay.style.color = '#ff6b6b';
@@ -380,15 +379,8 @@ function crashRocket() {
     rocket.style.transform = 'translateY(0) rotate(180deg)';
   }
   
-  if (rocketFire) {
-    rocketFire.style.opacity = '0';
-  }
-  
-  if (rocketTrail) {
-    rocketTrail.style.height = '0px';
-  }
-  
-  addToHistory(crashPoint, true);
+  // Добавляем в историю
+  addToHistory(crashPoint);
   
   if (crashPoint > topMultiplier) {
     topMultiplier = crashPoint;
@@ -406,16 +398,11 @@ function crashRocket() {
   // Запускаем таймер для следующей ставки (5 секунд)
   nextLaunchTime = Date.now() + 5000;
   
+  // Меняем состояние на waiting (ракета упала, можно ставить)
+  rocketState = 'waiting';
+  
   if (timerInterval) clearInterval(timerInterval);
   timerInterval = setInterval(updateBetTimer, 100);
-  
-  // Через 5 секунд автоматически запускаем новый полёт
-  setTimeout(() => {
-    if (rocketState === 'crashed') {
-      rocketState = 'waiting';
-      startRocketFlight();
-    }
-  }, 5000);
 }
 
 // Забрать выигрыш
@@ -430,7 +417,11 @@ function cashoutRocket() {
   
   updateBalance();
   
-  addToHistory(currentMultiplier, false);
+  // Добавляем в историю (выигрыш)
+  const item = document.createElement('div');
+  item.className = 'crash-history-item';
+  item.textContent = currentMultiplier.toFixed(2) + 'x';
+  crashHistory.insertBefore(item, crashHistory.firstChild);
   
   // Эффект при выигрыше
   if (multiplierDisplay) {
@@ -449,16 +440,24 @@ function cashoutRocket() {
   }
 }
 
-// Поставить ставку (ТОЛЬКО КОГДА РАКЕТА УПАЛА)
+// Поставить ставку (только когда ракета упала)
 function placeBet() {
-  // Можно ставить только когда ракета упала (ждущий режим)
+  // Проверяем, что ракета упала (режим waiting)
   if (rocketState !== 'waiting') {
-    alert('⏳ Дождись следующего запуска!');
+    alert('⏳ Дождись пока ракета упадёт!');
     return;
   }
   
+  // Проверяем, что нет активной ставки
   if (activeRocketBet) {
     alert('❌ У тебя уже есть активная ставка');
+    return;
+  }
+  
+  // Проверяем, что таймер ещё идёт
+  const now = Date.now();
+  if (now > nextLaunchTime) {
+    alert('⏳ Время вышло, дождись следующего раунда!');
     return;
   }
   
@@ -518,8 +517,7 @@ function checkAchievements() {
 
 // ========== ИНИЦИАЛИЗАЦИЯ ==========
 setTimeout(() => {
-  rocketState = 'waiting';
-  // Запускаем первый полёт через 1 секунду
+  // Первый запуск через 1 секунду
   setTimeout(() => {
     startRocketFlight();
   }, 1000);
