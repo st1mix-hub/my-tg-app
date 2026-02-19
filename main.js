@@ -277,4 +277,185 @@ function checkAchievements() {
   if (gamesPlayed >= 10) achTen.textContent = '✅';
   if (gamesPlayed >= 100) achHundred.textContent = '✅';
   if (balance >= 5000) achRich.textContent = '✅';
+// ========== ROCKET MODE ==========
+let rocketActive = false;
+let rocketInterval = null;
+let currentMultiplier = 1.0;
+let rocketBet = 0;
+let crashPoint = 0;
+let topMultiplier = 1.0;
+
+const rocket = document.getElementById('rocket');
+const multiplierDisplay = document.getElementById('multiplier');
+const launchBtn = document.getElementById('launchBtn');
+const cashoutBtn = document.getElementById('cashoutBtn');
+const rocketBetInput = document.getElementById('rocketBet');
+const autoCashoutInput = document.getElementById('autoCashout');
+const crashHistory = document.getElementById('crashHistory');
+const topMultiplierDisplay = document.getElementById('topMultiplier');
+const rocketTotalWonDisplay = document.getElementById('rocketTotalWon');
+
+let rocketTotalWon = 0;
+
+// Генерация точки краша (рандомная)
+function generateCrashPoint() {
+  // Чем выше множитель, тем меньше шанс
+  const r = Math.random();
+  if (r < 0.3) return 1.2; // 30% шанс краша до 1.2
+  if (r < 0.5) return 1.5; // 20% шанс краша до 1.5
+  if (r < 0.7) return 2.0; // 20% шанс краша до 2.0
+  if (r < 0.85) return 3.0; // 15% шанс краша до 3.0
+  if (r < 0.95) return 5.0; // 10% шанс краша до 5.0
+  return 10.0; // 5% шанс краша до 10.0
 }
+
+function startRocket() {
+  if (rocketActive) return;
+  
+  rocketBet = parseInt(rocketBetInput.value);
+  if (rocketBet < 1 || rocketBet > balance) {
+    alert('❌ Неверная ставка');
+    return;
+  }
+  
+  // Списываем ставку
+  balance -= rocketBet;
+  updateBalance();
+  
+  rocketActive = true;
+  launchBtn.disabled = true;
+  cashoutBtn.disabled = false;
+  rocketBetInput.disabled = true;
+  
+  currentMultiplier = 1.0;
+  crashPoint = generateCrashPoint();
+  
+  // Анимация ракеты
+  let height = 0;
+  rocket.style.bottom = '0px';
+  
+  rocketInterval = setInterval(() => {
+    if (!rocketActive) return;
+    
+    // Увеличиваем множитель
+    currentMultiplier += 0.01;
+    multiplierDisplay.textContent = currentMultiplier.toFixed(2) + 'x';
+    
+    // Поднимаем ракету
+    height += 2;
+    rocket.style.bottom = height + 'px';
+    
+    // Меняем цвет в зависимости от множителя
+    if (currentMultiplier > 3) {
+      multiplierDisplay.style.color = '#ff6b6b';
+    } else if (currentMultiplier > 2) {
+      multiplierDisplay.style.color = '#ffd700';
+    }
+    
+    // Проверка на авто-забор
+    const autoCashout = parseFloat(autoCashoutInput.value);
+    if (currentMultiplier >= autoCashout) {
+      cashout();
+    }
+    
+    // Проверка на краш
+    if (currentMultiplier >= crashPoint) {
+      crash();
+    }
+  }, 50);
+}
+
+function cashout() {
+  if (!rocketActive) return;
+  
+  clearInterval(rocketInterval);
+  rocketActive = false;
+  
+  // Расчёт выигрыша
+  const win = Math.floor(rocketBet * currentMultiplier);
+  balance += win;
+  rocketTotalWon += win;
+  updateBalance();
+  
+  // Анимация победы
+  multiplierDisplay.style.color = '#4caf50';
+  rocket.style.animation = 'none';
+  
+  // Обновляем топ множитель
+  if (currentMultiplier > topMultiplier) {
+    topMultiplier = currentMultiplier;
+    topMultiplierDisplay.textContent = topMultiplier.toFixed(2) + 'x';
+  }
+  
+  // Добавляем в историю
+  addToHistory(currentMultiplier, false);
+  
+  // Сброс
+  setTimeout(() => {
+    resetRocket();
+  }, 1000);
+}
+
+function crash() {
+  clearInterval(rocketInterval);
+  rocketActive = false;
+  
+  // Анимация падения
+  multiplierDisplay.style.color = '#ff6b6b';
+  multiplierDisplay.textContent = '💥 CRASH!';
+  rocket.style.animation = 'none';
+  rocket.style.transform = 'rotate(180deg)';
+  
+  // Добавляем в историю
+  addToHistory(currentMultiplier, true);
+  
+  // Сброс
+  setTimeout(() => {
+    resetRocket();
+  }, 1500);
+}
+
+function addToHistory(multiplier, isCrash) {
+  const item = document.createElement('div');
+  item.className = 'crash-history-item' + (isCrash ? ' crash' : '');
+  item.textContent = multiplier.toFixed(2) + 'x';
+  
+  crashHistory.insertBefore(item, crashHistory.firstChild);
+  
+  // Оставляем только последние 10
+  while (crashHistory.children.length > 10) {
+    crashHistory.removeChild(crashHistory.lastChild);
+  }
+}
+
+function resetRocket() {
+  rocketActive = false;
+  launchBtn.disabled = false;
+  cashoutBtn.disabled = true;
+  rocketBetInput.disabled = false;
+  
+  currentMultiplier = 1.0;
+  multiplierDisplay.textContent = '1.00x';
+  multiplierDisplay.style.color = 'gold';
+  rocket.style.bottom = '0px';
+  rocket.style.transform = 'none';
+  rocket.style.animation = 'rocketShake 0.2s infinite';
+  
+  rocketTotalWonDisplay.textContent = rocketTotalWon + ' 🪙';
+}
+
+// Обработчики
+launchBtn.addEventListener('click', startRocket);
+cashoutBtn.addEventListener('click', cashout);
+
+// Обновляем состояние кнопок при переключении на вкладку ракеты
+document.querySelector('[data-tab="rocket"]').addEventListener('click', () => {
+  setTimeout(() => {
+    if (!rocketActive) {
+      launchBtn.disabled = false;
+      rocketBetInput.disabled = false;
+    }
+  }, 300);
+});
+}
+
