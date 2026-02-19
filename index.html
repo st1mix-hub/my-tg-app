@@ -3,155 +3,172 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LUDKA CASINO</title>
+  <title>✨ LUDKA CASINO ✨</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="app">
+  <div class="app glass-effect">
     <!-- Вкладки -->
-    <div class="tabs">
+    <div class="tabs neon-tabs">
       <button class="tab active" data-tab="spins">🎰 SPINS</button>
-      <button class="tab" data-tab="profile">👤 PROFILE</button>
+      <button class="tab" data-tab="profile">👑 PROFILE</button>
     </div>
 
     <!-- Вкладка SPINS -->
-    <div class="tab-content active" id="spins-tab">
-      <div class="casino-container">
-        <h1 class="title">🎰 LUDKA CASINO</h1>
+    <div class="tab-content active fade-in" id="spins-tab">
+      <div class="casino-card">
+        <h1 class="neon-title">✨ LUDKA ✨</h1>
         
-        <div class="balance-box">
-          <span class="balance-label">Баланс:</span>
+        <div class="balance-box glow">
+          <span>💰 БАЛАНС</span>
           <span class="balance-value" id="balance">1000</span>
-          <span class="currency">🪙</span>
         </div>
 
         <div class="slot-machine">
           <div class="reels">
-            <div class="reel" id="reel1">🍒</div>
-            <div class="reel" id="reel2">🍒</div>
-            <div class="reel" id="reel3">🍒</div>
+            <div class="reel glow" id="reel1">🍒</div>
+            <div class="reel glow" id="reel2">🍒</div>
+            <div class="reel glow" id="reel3">🍒</div>
           </div>
         </div>
 
         <div class="controls">
-          <div class="bet-control">
-            <label>Ставка:</label>
-            <input type="number" id="bet" value="10" min="1" max="1000" class="bet-input">
+          <div class="bet-panel">
+            <label>💰 СТАВКА</label>
+            <input type="number" id="bet" value="10" min="1" max="1000" class="neon-input">
           </div>
           
           <div class="quick-bets">
-            <button class="quick-bet" data-multiplier="2">x2</button>
-            <button class="quick-bet" data-multiplier="5">x5</button>
-            <button class="quick-bet" data-multiplier="10">x10</button>
-            <button class="quick-bet" data-multiplier="max">MAX</button>
+            <button class="chip" data-multiplier="2">x2</button>
+            <button class="chip" data-multiplier="5">x5</button>
+            <button class="chip" data-multiplier="10">x10</button>
+            <button class="chip" data-multiplier="max">MAX</button>
           </div>
           
-          <button class="spin-button" id="spinBtn">🎲 КРУТИТЬ</button>
+          <button class="spin-button glow-pulse" id="spinBtn">
+            <span>🎰 КРУТИТЬ</span>
+          </button>
         </div>
 
-        <div class="message-area" id="message">🎲 Сделай ставку и крути!</div>
-
-        <div class="bonus-game" id="bonusGame">
-          <h2>🎁 БОНУСНЫЙ РАУНД!</h2>
-          <p>Выбери сундук:</p>
-          <div class="chests">
-            <div class="chest" id="chest1">📦</div>
-            <div class="chest" id="chest2">📦</div>
-            <div class="chest" id="chest3">📦</div>
-          </div>
+        <div class="message-area glow" id="message">
+          🎲 Сделай ставку и крути!
         </div>
 
         <div class="win-table">
-          <h3>💎 Выигрыши:</h3>
-          <div class="win-row"><span>Два одинаковых</span> <span class="win-multiplier">x2</span></div>
-          <div class="win-row"><span>Три одинаковых</span> <span class="win-multiplier">x10</span></div>
-          <div class="win-row"><span>Три 💎 алмаза</span> <span class="win-multiplier">x50 + БОНУС</span></div>
+          <h3>💎 ВЫИГРЫШИ</h3>
+          <div class="win-row"><span>Два одинаковых</span> <span class="neon-text">x2</span></div>
+          <div class="win-row"><span>Три одинаковых</span> <span class="neon-text">x10</span></div>
+          <div class="win-row"><span>Три 💎 АЛМАЗА</span> <span class="neon-text">x50 + БОНУС</span></div>
         </div>
       </div>
     </div>
 
-    <!-- Вкладка PROFILE -->
-    <div class="tab-content" id="profile-tab">
-      <div class="profile-container">
-        <h1 class="title">👤 ПРОФИЛЬ</h1>
+    <!-- Вкладка PROFILE (НОВЫЙ ДИЗАЙН) -->
+    <div class="tab-content fade-in" id="profile-tab">
+      <div class="profile-card">
+        <div class="profile-glow"></div>
         
         <div class="profile-header">
-          <div class="avatar" id="avatar">👤</div>
+          <div class="avatar-container">
+            <div class="avatar-ring"></div>
+            <div class="avatar" id="avatar">👤</div>
+          </div>
           <div class="user-info">
-            <div class="username" id="username">Загрузка...</div>
-            <div class="user-id" id="userId">ID: -</div>
+            <div class="username neon-text" id="username">Загрузка...</div>
+            <div class="user-badge">💎 PREMIUM</div>
+          </div>
+        </div>
+
+        <div class="stats-container">
+          <div class="stat-item">
+            <div class="stat-icon">🎰</div>
+            <div class="stat-label">ИГРЫ</div>
+            <div class="stat-value counter" id="gamesPlayed">0</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon">🏆</div>
+            <div class="stat-label">ПОБЕДЫ</div>
+            <div class="stat-value counter" id="wins">0</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon">📊</div>
+            <div class="stat-label">WIN%</div>
+            <div class="stat-value counter" id="winRate">0%</div>
+          </div>
+        </div>
+
+        <div class="balance-highlight">
+          <div class="balance-icon">💰</div>
+          <div class="balance-info">
+            <div class="balance-label">ТЕКУЩИЙ БАЛАНС</div>
+            <div class="balance-amount" id="profileBalance">1000</div>
           </div>
         </div>
 
         <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-label">Игр сыграно</div>
-            <div class="stat-value" id="gamesPlayed">0</div>
+          <div class="stats-card">
+            <div class="stats-icon">💸</div>
+            <div class="stats-detail">
+              <span>ВСЕГО ВЫИГРАНО</span>
+              <span class="neon-text" id="totalWon">0</span>
+            </div>
           </div>
-          <div class="stat-card">
-            <div class="stat-label">Побед</div>
-            <div class="stat-value" id="wins">0</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Процент побед</div>
-            <div class="stat-value" id="winRate">0%</div>
+          <div class="stats-card">
+            <div class="stats-icon">🔥</div>
+            <div class="stats-detail">
+              <span>ЛУЧШИЙ ВЫИГРЫШ</span>
+              <span class="neon-text" id="bestWin">0</span>
+            </div>
           </div>
         </div>
 
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-label">Текущий баланс</div>
-            <div class="stat-value" id="profileBalance">1000 🪙</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Всего выиграно</div>
-            <div class="stat-value" id="totalWon">0 🪙</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Лучший выигрыш</div>
-            <div class="stat-value" id="bestWin">0 🪙</div>
-          </div>
-        </div>
-
-        <div class="achievements">
-          <h3>🏆 Достижения</h3>
-          <div class="achievement-list">
-            <div class="achievement" id="achFirst">
-              <span class="ach-icon">🎰</span>
-              <span class="ach-name">Первая игра</span>
-              <span class="ach-status" id="achFirstStatus">❌</span>
+        <div class="achievements-section">
+          <h3>🏆 ДОСТИЖЕНИЯ</h3>
+          <div class="achievements-grid">
+            <div class="achievement-card" id="achFirst">
+              <div class="achievement-icon">🎰</div>
+              <div class="achievement-name">ПЕРВАЯ ИГРА</div>
+              <div class="achievement-status" id="achFirstStatus">❌</div>
             </div>
-            <div class="achievement" id="achTen">
-              <span class="ach-icon">🔟</span>
-              <span class="ach-name">10 игр</span>
-              <span class="ach-status" id="achTenStatus">❌</span>
+            <div class="achievement-card" id="achTen">
+              <div class="achievement-icon">🔟</div>
+              <div class="achievement-name">10 ИГР</div>
+              <div class="achievement-status" id="achTenStatus">❌</div>
             </div>
-            <div class="achievement" id="achHundred">
-              <span class="ach-icon">💯</span>
-              <span class="ach-name">100 игр</span>
-              <span class="ach-status" id="achHundredStatus">❌</span>
+            <div class="achievement-card" id="achHundred">
+              <div class="achievement-icon">💯</div>
+              <div class="achievement-name">100 ИГР</div>
+              <div class="achievement-status" id="achHundredStatus">❌</div>
             </div>
-            <div class="achievement" id="achJackpot">
-              <span class="ach-icon">💎</span>
-              <span class="ach-name">Джекпот</span>
-              <span class="ach-status" id="achJackpotStatus">❌</span>
+            <div class="achievement-card" id="achJackpot">
+              <div class="achievement-icon">💎</div>
+              <div class="achievement-name">ДЖЕКПОТ</div>
+              <div class="achievement-status" id="achJackpotStatus">❌</div>
             </div>
-            <div class="achievement" id="achRich">
-              <span class="ach-icon">💰</span>
-              <span class="ach-name">Богач (5000+)</span>
-              <span class="ach-status" id="achRichStatus">❌</span>
+            <div class="achievement-card" id="achRich">
+              <div class="achievement-icon">💰</div>
+              <div class="achievement-name">БОГАЧ (5000+)</div>
+              <div class="achievement-status" id="achRichStatus">❌</div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  
-  <audio id="spinSound" src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3"></audio>
-  <audio id="winSound" src="https://www.soundjay.com/misc/sounds/bell-ringing-08.mp3"></audio>
-  <audio id="loseSound" src="https://www.soundjay.com/misc/sounds/fail-buzzer-02.mp3"></audio>
-  <audio id="bonusSound" src="https://www.soundjay.com/misc/sounds/applause-1.mp3"></audio>
-  
+
+  <!-- Бонусный раунд (скрыт) -->
+  <div class="bonus-overlay" id="bonusGame">
+    <div class="bonus-card">
+      <h2>🎁 БОНУСНЫЙ РАУНД</h2>
+      <p>Выбери сундук</p>
+      <div class="chests">
+        <div class="chest" id="chest1">📦</div>
+        <div class="chest" id="chest2">📦</div>
+        <div class="chest" id="chest3">📦</div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="main.js"></script>
 </body>
