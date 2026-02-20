@@ -20,9 +20,10 @@ const reel1 = document.getElementById('reel1');
 const reel2 = document.getElementById('reel2');
 const reel3 = document.getElementById('reel3');
 const spinBtn = document.getElementById('spinBtn');
+const betInput = document.getElementById('bet');
 const balanceSpan = document.getElementById('balance');
 const messageDiv = document.getElementById('message');
-const betBtns = document.querySelectorAll('.bet-btn');
+const quickBetBtns = document.querySelectorAll('.chip');
 
 // PROFILE
 const usernameEl = document.getElementById('username');
@@ -33,9 +34,7 @@ const winRateEl = document.getElementById('winRate');
 const profileBalanceEl = document.getElementById('profileBalance');
 const totalWonEl = document.getElementById('totalWon');
 const bestWinEl = document.getElementById('bestWin');
-const miniBalance = document.getElementById('miniBalance');
 
-// Достижения
 const achFirst = document.getElementById('achFirstStatus');
 const achTen = document.getElementById('achTenStatus');
 const achHundred = document.getElementById('achHundredStatus');
@@ -45,9 +44,10 @@ const achRich = document.getElementById('achRichStatus');
 // ROCKET
 const rocket = document.getElementById('rocket');
 const multiplierDisplay = document.getElementById('multiplier');
-const betTimer = document.getElementById('betTimer');
-const progressBar = document.getElementById('progressBar');
-const actionBtn = document.getElementById('actionBtn');
+const launchTimer = document.getElementById('launchTimer');
+const scaleFill = document.getElementById('scaleFill');
+const placeBetBtn = document.getElementById('placeBetBtn');
+const cashoutBtn = document.getElementById('cashoutBtn');
 const rocketBetInput = document.getElementById('rocketBet');
 const activeBetDiv = document.getElementById('activeBet');
 const currentBetAmount = document.getElementById('currentBetAmount');
@@ -73,7 +73,7 @@ if (tg.initDataUnsafe?.user) {
   usernameEl.textContent = user.username ? `@${user.username}` : user.first_name;
   
   if (user.photo_url) {
-    avatarEl.innerHTML = `<img src="${user.photo_url}" style="width:60px;height:60px;border-radius:50%;">`;
+    avatarEl.innerHTML = `<img src="${user.photo_url}" style="width:70px;height:70px;border-radius:50%;">`;
   }
 }
 
@@ -91,14 +91,15 @@ document.querySelectorAll('.tab').forEach(tab => {
 });
 
 // ========== SPINS ФУНКЦИИ ==========
-betBtns.forEach(btn => {
+quickBetBtns.forEach(btn => {
   btn.addEventListener('click', () => {
-    const bet = btn.dataset.bet;
-    if (bet === 'max') {
+    const multiplier = btn.dataset.multiplier;
+    if (multiplier === 'max') {
       currentBet = balance;
     } else {
-      currentBet = Math.min(parseInt(bet), balance);
+      currentBet = Math.min(10 * parseInt(multiplier), balance);
     }
+    betInput.value = currentBet;
   });
 });
 
@@ -107,18 +108,21 @@ spinBtn.addEventListener('click', spin);
 function spin() {
   if (spinning) return;
   
-  if (currentBet < 1 || currentBet > balance) {
-    messageDiv.textContent = '❌ НЕВЕРНАЯ СТАВКА';
+  let bet = Number(betInput.value);
+  if (bet < 1 || bet > balance) {
+    messageDiv.textContent = '❌ Неверная ставка';
     return;
   }
   
+  currentBet = bet;
   spinning = true;
   spinBtn.disabled = true;
-  balance -= currentBet;
+  balance -= bet;
   updateBalance();
   
   gamesPlayed++;
-  messageDiv.textContent = '🎰 ВРАЩАЕМ...';
+  
+  messageDiv.textContent = '🎰 Вращаем...';
   
   reel1.classList.add('spinning');
   reel2.classList.add('spinning');
@@ -155,23 +159,23 @@ function spin() {
     if (r1 === r2 && r2 === r3) {
       wins++;
       if (r1 === '💎') {
-        win = currentBet * 50;
+        win = bet * 50;
         achJackpot.textContent = '✅';
       } else {
-        win = currentBet * 10;
+        win = bet * 10;
       }
     } else if (r1 === r2 || r1 === r3 || r2 === r3) {
       wins++;
-      win = currentBet * 2;
+      win = bet * 2;
     }
     
     if (win > 0) {
       balance += win;
       totalWon += win;
       if (win > bestWin) bestWin = win;
-      messageDiv.textContent = `🎉 ВЫИГРЫШ +${win}`;
+      messageDiv.textContent = `🎉 Выигрыш +${win}`;
     } else {
-      messageDiv.textContent = '😢 ПОВЕЗЁТ В СЛЕДУЮЩИЙ РАЗ';
+      messageDiv.textContent = '😢 Повезёт в следующий раз';
     }
     
     updateBalance();
@@ -185,11 +189,11 @@ function spin() {
 // ========== ROCKET ФУНКЦИИ ==========
 function generateCrashPoint() {
   const r = Math.random();
-  if (r < 0.3) return Math.round((Math.random() * 0.7 + 1.1) * 100) / 100; // 1.1-1.8
-  if (r < 0.55) return Math.round((Math.random() * 0.7 + 1.8) * 100) / 100; // 1.8-2.5
-  if (r < 0.75) return Math.round((Math.random() * 1.5 + 2.5) * 100) / 100; // 2.5-4.0
-  if (r < 0.9) return Math.round((Math.random() * 2.0 + 4.0) * 100) / 100; // 4.0-6.0
-  return Math.round((Math.random() * 4.0 + 6.0) * 100) / 100; // 6.0-10.0
+  if (r < 0.3) return Math.round((Math.random() * 0.7 + 1.1) * 100) / 100;
+  if (r < 0.55) return Math.round((Math.random() * 0.7 + 1.8) * 100) / 100;
+  if (r < 0.75) return Math.round((Math.random() * 1.5 + 2.5) * 100) / 100;
+  if (r < 0.9) return Math.round((Math.random() * 2.0 + 4.0) * 100) / 100;
+  return Math.round((Math.random() * 4.0 + 6.0) * 100) / 100;
 }
 
 function addToHistory(multiplier) {
@@ -197,33 +201,21 @@ function addToHistory(multiplier) {
   item.className = 'crash-history-item crash';
   item.textContent = multiplier.toFixed(2) + 'x';
   crashHistory.insertBefore(item, crashHistory.firstChild);
-  while (crashHistory.children.length > 8) crashHistory.removeChild(crashHistory.lastChild);
+  while (crashHistory.children.length > 10) crashHistory.removeChild(crashHistory.lastChild);
 }
 
-function updateActionButton() {
-  if (activeRocketBet && rocketState === 'flying') {
-    actionBtn.textContent = '💸 ЗАБРАТЬ';
-    actionBtn.style.background = 'linear-gradient(145deg, #ffd966, #ffb347)';
-  } else if (!activeRocketBet && rocketState === 'waiting') {
-    actionBtn.textContent = '📌 СТАВКА';
-    actionBtn.style.background = 'linear-gradient(145deg, #6b5fd3, #5849c0)';
-    const now = Date.now();
-    actionBtn.disabled = now > nextLaunchTime;
-  } else {
-    actionBtn.disabled = true;
-  }
-}
-
-function updateBetTimer() {
+function updateTimer() {
   const now = Date.now();
   const timeLeft = Math.max(0, Math.ceil((nextLaunchTime - now) / 1000));
   
-  if (betTimer) {
-    betTimer.querySelector('span').textContent = timeLeft + 'с';
-    betTimer.style.display = (rocketState === 'waiting' && timeLeft > 0) ? 'block' : 'none';
+  if (launchTimer) {
+    launchTimer.textContent = `🚀 ${timeLeft}с`;
+    launchTimer.style.display = rocketState === 'waiting' ? 'block' : 'none';
   }
   
-  updateActionButton();
+  if (placeBetBtn) {
+    placeBetBtn.disabled = !(rocketState === 'waiting' && timeLeft > 0) || activeRocketBet !== null;
+  }
   
   if (timeLeft <= 0 && rocketState === 'waiting') startRocketFlight();
 }
@@ -233,13 +225,11 @@ function startRocketFlight() {
   currentMultiplier = 1.0;
   crashPoint = generateCrashPoint();
   
-  betTimer.style.display = 'none';
+  launchTimer.style.display = 'none';
   multiplierDisplay.textContent = '1.00x';
-  progressBar.style.width = '0%';
+  scaleFill.style.height = '0%';
+  rocket.style.transform = 'translateY(0)';
   
-  if (rocket) rocket.style.transform = 'translateY(0)';
-  
-  updateActionButton();
   if (rocketInterval) clearInterval(rocketInterval);
   
   let height = 0;
@@ -251,19 +241,16 @@ function startRocketFlight() {
     
     multiplierDisplay.textContent = currentMultiplier.toFixed(2) + 'x';
     
-    // Медленный подъём строго вверх
     height = Math.min(90, height + 0.4);
     rocket.style.transform = `translateY(-${height}px)`;
     
-    const progress = Math.min(100, (currentMultiplier / 10) * 100);
-    progressBar.style.width = progress + '%';
+    const scalePercent = (currentMultiplier / 10) * 100;
+    scaleFill.style.height = Math.min(100, scalePercent) + '%';
     
     if (currentMultiplier > 3) {
       multiplierDisplay.style.color = '#ff6b6b';
-      progressBar.style.background = 'linear-gradient(90deg, #ff6b6b, #ff4444)';
     } else if (currentMultiplier > 2) {
       multiplierDisplay.style.color = '#ffd966';
-      progressBar.style.background = 'linear-gradient(90deg, #6b5fd3, #ffd966)';
     }
     
     if (activeRocketBet && potentialWin) {
@@ -285,6 +272,7 @@ function crashRocket() {
   if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
   
   addToHistory(crashPoint);
+  
   if (crashPoint > topMultiplier) {
     topMultiplier = crashPoint;
     topMultiplierDisplay.textContent = topMultiplier.toFixed(2) + 'x';
@@ -297,9 +285,13 @@ function crashRocket() {
   
   nextLaunchTime = Date.now() + 5000;
   rocketState = 'waiting';
-  updateActionButton();
   
-  timerInterval = setInterval(updateBetTimer, 100);
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(updateTimer, 100);
+  
+  setTimeout(() => {
+    if (rocketState === 'waiting') startRocketFlight();
+  }, 5000);
 }
 
 function cashoutRocket() {
@@ -310,6 +302,7 @@ function cashoutRocket() {
   balance += win;
   rocketTotalWon += win;
   if (win > bestWin) bestWin = win;
+  
   updateBalance();
   
   const item = document.createElement('div');
@@ -324,30 +317,30 @@ function cashoutRocket() {
   
   activeRocketBet = null;
   activeBetDiv.style.display = 'none';
-  updateActionButton();
-  rocketTotalWonDisplay.textContent = rocketTotalWon;
+  
+  rocketTotalWonDisplay.textContent = rocketTotalWon + ' 🪙';
 }
 
 function placeBet() {
   if (rocketState !== 'waiting') {
-    alert('⏳ ДОЖДИСЬ ПАДЕНИЯ');
+    alert('⏳ Дождись падения ракеты');
     return;
   }
   
   if (activeRocketBet) {
-    alert('❌ СТАВКА УЖЕ ЕСТЬ');
+    alert('❌ Ставка уже есть');
     return;
   }
   
   const now = Date.now();
   if (now > nextLaunchTime) {
-    alert('⏳ ВРЕМЯ ВЫШЛО');
+    alert('⏳ Время вышло');
     return;
   }
   
   const bet = parseInt(rocketBetInput.value);
   if (bet < 1 || bet > balance) {
-    alert('❌ НЕВЕРНАЯ СТАВКА');
+    alert('❌ Неверная ставка');
     return;
   }
   
@@ -359,20 +352,18 @@ function placeBet() {
   currentBetAmount.textContent = bet;
   potentialWin.textContent = bet;
   
-  updateActionButton();
+  placeBetBtn.disabled = true;
+  
   if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
 }
 
-actionBtn.addEventListener('click', () => {
-  if (actionBtn.textContent.includes('ЗАБРАТЬ')) cashoutRocket();
-  else placeBet();
-});
+placeBetBtn.addEventListener('click', placeBet);
+cashoutBtn.addEventListener('click', cashoutRocket);
 
 // ========== ОБЩИЕ ФУНКЦИИ ==========
 function updateBalance() {
   balanceSpan.textContent = balance;
   profileBalanceEl.textContent = balance;
-  miniBalance.textContent = balance;
 }
 
 function updateProfileStats() {
@@ -385,6 +376,7 @@ function updateProfileStats() {
   achFirst.textContent = gamesPlayed >= 1 ? '✅' : '❌';
   achTen.textContent = gamesPlayed >= 10 ? '✅' : '❌';
   achHundred.textContent = gamesPlayed >= 100 ? '✅' : '❌';
+  achJackpot.textContent = bestWin >= 500 ? '✅' : '❌';
   achRich.textContent = balance >= 5000 ? '✅' : '❌';
 }
 
@@ -399,3 +391,5 @@ function checkAchievements() {
 setTimeout(() => {
   startRocketFlight();
 }, 1000);
+
+document.querySelector('[data-tab="profile"]').addEventListener('click', updateProfileStats);
